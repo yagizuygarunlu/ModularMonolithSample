@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MediatRVersion>12.2.0</MediatRVersion>
+    <EFCoreVersion>9.0.0-preview.1.24081.2</EFCoreVersion>
+    <FluentValidationVersion>11.9.0</FluentValidationVersion>
+  </PropertyGroup>
+</Project> 

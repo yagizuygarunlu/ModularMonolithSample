@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ModularMonolithSample.Event.Domain;
+
+namespace ModularMonolithSample.Event.Infrastructure;
+
+public class EventRepository : IEventRepository
+{
+    private readonly EventDbContext _context;
+
+    public EventRepository(EventDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Event?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Events.FindAsync(new object[] { id }, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Event>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Events.ToListAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(Event @event, CancellationToken cancellationToken = default)
+    {
+        await _context.Events.AddAsync(@event, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Event @event, CancellationToken cancellationToken = default)
+    {
+        _context.Events.Update(@event);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var @event = await GetByIdAsync(id, cancellationToken);
+        if (@event != null)
+        {
+            _context.Events.Remove(@event);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+} 
