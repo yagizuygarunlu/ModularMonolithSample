@@ -1,5 +1,6 @@
 using ModularMonolithSample.Attendee.Infrastructure;
 using ModularMonolithSample.Event.Infrastructure;
+using ModularMonolithSample.Feedback.Infrastructure;
 using ModularMonolithSample.Ticket.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEventModule();
 builder.Services.AddAttendeeModule();
 builder.Services.AddTicketModule();
+builder.Services.AddFeedbackModule();
 
 var app = builder.Build();
 
