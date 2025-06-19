@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithSample.Event.Application.Commands.CreateEvent;
+using ModularMonolithSample.Event.Application.Queries.GetEvent;
 
 namespace ModularMonolithSample.API.Controllers;
 
@@ -18,10 +19,22 @@ public class EventsController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<EventDto>> GetEvent(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetEventQuery(id);
+        var result = await _mediator.Send(query, cancellationToken);
+        
+        if (result == null)
+            return NotFound();
+            
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateEvent(CreateEventCommand command, CancellationToken cancellationToken)
     {
         var eventId = await _mediator.Send(command, cancellationToken);
-        return Ok(eventId);
+        return CreatedAtAction(nameof(GetEvent), new { id = eventId }, eventId);
     }
 } 
