@@ -5,6 +5,7 @@ using MediatR;
 using ModularMonolithSample.Attendee.Domain;
 using ModularMonolithSample.Event.Domain;
 using ModularMonolithSample.Ticket.Domain;
+using TicketEntity = ModularMonolithSample.Ticket.Domain.Ticket;
 
 namespace ModularMonolithSample.Ticket.Application.Commands.IssueTicket;
 
@@ -47,9 +48,9 @@ public class IssueTicketCommandHandler : IRequestHandler<IssueTicketCommand, Gui
 
         // Check if attendee already has a ticket
         var existingTickets = await _ticketRepository.GetByAttendeeIdAsync(request.AttendeeId, cancellationToken);
-        foreach (var ticket in existingTickets)
+        foreach (var existingTicket in existingTickets)
         {
-            if (ticket.Status == TicketStatus.Issued || ticket.Status == TicketStatus.Validated)
+            if (existingTicket.Status == TicketStatus.Issued || existingTicket.Status == TicketStatus.Validated)
             {
                 throw new InvalidOperationException("Attendee already has an active ticket for this event.");
             }
@@ -59,14 +60,14 @@ public class IssueTicketCommandHandler : IRequestHandler<IssueTicketCommand, Gui
         var ticketNumber = GenerateTicketNumber();
 
         // Create and save ticket
-        var ticket = new Ticket(
+        var newTicket = new TicketEntity(
             ticketNumber,
             request.EventId,
             request.AttendeeId,
             @event.Price);
 
-        await _ticketRepository.AddAsync(ticket, cancellationToken);
-        return ticket.Id;
+        await _ticketRepository.AddAsync(newTicket, cancellationToken);
+        return newTicket.Id;
     }
 
     private string GenerateTicketNumber()

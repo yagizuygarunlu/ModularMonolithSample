@@ -1,0 +1,32 @@
+# .NET Core
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+README.md
+LICENSE
+
+# Tests
+**/TestResults/
+
+# OS
+.DS_Store
+Thumbs.db 

@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithSample.Attendee.Application.Commands.RegisterAttendee;
@@ -26,9 +27,17 @@ public class AttendeesController : ControllerBase
             var attendeeId = await _mediator.Send(command, cancellationToken);
             return Ok(attendeeId);
         }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors);
+        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
         }
     }
 } 

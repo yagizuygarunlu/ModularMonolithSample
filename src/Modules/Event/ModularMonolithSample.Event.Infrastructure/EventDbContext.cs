@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithSample.Event.Domain;
+using EventEntity = ModularMonolithSample.Event.Domain.Event;
 
 namespace ModularMonolithSample.Event.Infrastructure;
 
 public class EventDbContext : DbContext
 {
-    public DbSet<Event> Events => Set<Event>();
+    public DbSet<EventEntity> Events => Set<EventEntity>();
 
     public EventDbContext(DbContextOptions<EventDbContext> options) : base(options)
     {
@@ -13,7 +14,7 @@ public class EventDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Event>(entity =>
+        modelBuilder.Entity<EventEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);

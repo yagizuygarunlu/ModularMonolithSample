@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithSample.Feedback.Domain;
+using FeedbackEntity = ModularMonolithSample.Feedback.Domain.Feedback;
 
 namespace ModularMonolithSample.Feedback.Infrastructure;
 
 public class FeedbackDbContext : DbContext
 {
-    public DbSet<Feedback> Feedbacks => Set<Feedback>();
+    public DbSet<FeedbackEntity> Feedbacks => Set<FeedbackEntity>();
 
     public FeedbackDbContext(DbContextOptions<FeedbackDbContext> options) : base(options)
     {
@@ -13,7 +14,7 @@ public class FeedbackDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Feedback>(entity =>
+        modelBuilder.Entity<FeedbackEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.EventId).IsRequired();

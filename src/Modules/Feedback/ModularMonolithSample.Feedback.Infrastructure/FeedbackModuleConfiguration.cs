@@ -1,5 +1,10 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ModularMonolithSample.BuildingBlocks.Behaviors;
+using ModularMonolithSample.BuildingBlocks.Common;
+using ModularMonolithSample.BuildingBlocks.Infrastructure;
 using ModularMonolithSample.Feedback.Application.Commands.SubmitFeedback;
 using ModularMonolithSample.Feedback.Domain;
 
@@ -13,7 +18,16 @@ public static class FeedbackModuleConfiguration
             options.UseInMemoryDatabase("FeedbackDb"));
 
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SubmitFeedbackCommand).Assembly));
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        
+        // Add validators
+        services.AddValidatorsFromAssembly(typeof(SubmitFeedbackCommand).Assembly);
+        
+        services.AddMediatR(cfg => 
+        {
+            cfg.RegisterServicesFromAssembly(typeof(SubmitFeedbackCommand).Assembly);
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        });
 
         return services;
     }

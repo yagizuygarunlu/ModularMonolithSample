@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithSample.Event.Application.Commands.CreateEvent;
@@ -26,7 +27,7 @@ public class EventsController : ControllerBase
         var result = await _mediator.Send(query, cancellationToken);
         
         if (result == null)
-            return NotFound();
+            return NotFound($"Event with ID {id} not found.");
             
         return Ok(result);
     }
@@ -34,7 +35,18 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateEvent(CreateEventCommand command, CancellationToken cancellationToken)
     {
-        var eventId = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetEvent), new { id = eventId }, eventId);
+        try
+        {
+            var eventId = await _mediator.Send(command, cancellationToken);
+            return CreatedAtAction(nameof(GetEvent), new { id = eventId }, eventId);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 } 

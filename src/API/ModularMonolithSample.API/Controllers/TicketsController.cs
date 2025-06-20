@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithSample.Ticket.Application.Commands.IssueTicket;
@@ -26,9 +27,17 @@ public class TicketsController : ControllerBase
             var ticketId = await _mediator.Send(command, cancellationToken);
             return Ok(ticketId);
         }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors);
+        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
         }
     }
 } 

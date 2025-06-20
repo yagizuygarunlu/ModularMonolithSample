@@ -6,4 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModularMonolithSample.Feedback.Domain\ModularMonolithSample.Feedback.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\ModularMonolithSample.BuildingBlocks\ModularMonolithSample.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\Event\ModularMonolithSample.Event.Domain\ModularMonolithSample.Event.Domain.csproj" />
+    <ProjectReference Include="..\..\Attendee\ModularMonolithSample.Attendee.Domain\ModularMonolithSample.Attendee.Domain.csproj" />
+    <ProjectReference Include="..\..\Ticket\ModularMonolithSample.Ticket.Domain\ModularMonolithSample.Ticket.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

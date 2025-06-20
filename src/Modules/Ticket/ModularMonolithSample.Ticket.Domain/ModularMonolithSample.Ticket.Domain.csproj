@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -7,13 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="FluentValidation" Version="11.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ModularMonolithSample.Event.Domain\ModularMonolithSample.Event.Domain.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\ModularMonolithSample.BuildingBlocks\ModularMonolithSample.BuildingBlocks.csproj" />
   </ItemGroup>
 
-</Project>
+</Project> 

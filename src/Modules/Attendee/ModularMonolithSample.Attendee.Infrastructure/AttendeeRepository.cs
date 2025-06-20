@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithSample.Attendee.Domain;
 using ModularMonolithSample.BuildingBlocks.Common;
+using AttendeeEntity = ModularMonolithSample.Attendee.Domain.Attendee;
 
 namespace ModularMonolithSample.Attendee.Infrastructure;
 
@@ -20,12 +21,12 @@ public class AttendeeRepository : IAttendeeRepository
         _domainEventDispatcher = domainEventDispatcher;
     }
 
-    public async Task<Attendee?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<AttendeeEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Attendees.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public async Task<IEnumerable<Attendee>> GetByEventIdAsync(Guid eventId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<AttendeeEntity>> GetByEventIdAsync(Guid eventId, CancellationToken cancellationToken = default)
     {
         return await _context.Attendees
             .Where(a => a.EventId == eventId)
@@ -38,7 +39,7 @@ public class AttendeeRepository : IAttendeeRepository
             .CountAsync(a => a.EventId == eventId, cancellationToken);
     }
 
-    public async Task AddAsync(Attendee attendee, CancellationToken cancellationToken = default)
+    public async Task AddAsync(AttendeeEntity attendee, CancellationToken cancellationToken = default)
     {
         await _context.Attendees.AddAsync(attendee, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -48,7 +49,7 @@ public class AttendeeRepository : IAttendeeRepository
         attendee.ClearDomainEvents();
     }
 
-    public async Task UpdateAsync(Attendee attendee, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(AttendeeEntity attendee, CancellationToken cancellationToken = default)
     {
         _context.Attendees.Update(attendee);
         await _context.SaveChangesAsync(cancellationToken);

@@ -6,6 +6,7 @@ using ModularMonolithSample.Attendee.Domain;
 using ModularMonolithSample.Event.Domain;
 using ModularMonolithSample.Feedback.Domain;
 using ModularMonolithSample.Ticket.Domain;
+using FeedbackEntity = ModularMonolithSample.Feedback.Domain.Feedback;
 
 namespace ModularMonolithSample.Feedback.Application.Commands.SubmitFeedback;
 
@@ -80,7 +81,7 @@ public class SubmitFeedbackCommandHandler : IRequestHandler<SubmitFeedbackComman
         }
 
         // Create and save new feedback
-        var feedback = new Feedback(
+        var feedback = new FeedbackEntity(
             request.EventId,
             request.AttendeeId,
             request.Rating,

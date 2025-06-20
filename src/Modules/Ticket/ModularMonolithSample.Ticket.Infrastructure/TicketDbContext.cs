@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithSample.Ticket.Domain;
+using TicketEntity = ModularMonolithSample.Ticket.Domain.Ticket;
 
 namespace ModularMonolithSample.Ticket.Infrastructure;
 
 public class TicketDbContext : DbContext
 {
-    public DbSet<Ticket> Tickets => Set<Ticket>();
+    public DbSet<TicketEntity> Tickets => Set<TicketEntity>();
 
     public TicketDbContext(DbContextOptions<TicketDbContext> options) : base(options)
     {
@@ -13,7 +14,7 @@ public class TicketDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Ticket>(entity =>
+        modelBuilder.Entity<TicketEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.TicketNumber).IsRequired().HasMaxLength(50);

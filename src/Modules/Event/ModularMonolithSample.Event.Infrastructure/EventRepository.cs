@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithSample.BuildingBlocks.Common;
 using ModularMonolithSample.Event.Domain;
+using EventEntity = ModularMonolithSample.Event.Domain.Event;
 
 namespace ModularMonolithSample.Event.Infrastructure;
 
@@ -19,17 +20,17 @@ public class EventRepository : IEventRepository
         _domainEventDispatcher = domainEventDispatcher;
     }
 
-    public async Task<Event?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<EventEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Events.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public async Task<IEnumerable<Event>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<EventEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Events.ToListAsync(cancellationToken);
     }
 
-    public async Task AddAsync(Event @event, CancellationToken cancellationToken = default)
+    public async Task AddAsync(EventEntity @event, CancellationToken cancellationToken = default)
     {
         await _context.Events.AddAsync(@event, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -39,7 +40,7 @@ public class EventRepository : IEventRepository
         @event.ClearDomainEvents();
     }
 
-    public async Task UpdateAsync(Event @event, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(EventEntity @event, CancellationToken cancellationToken = default)
     {
         _context.Events.Update(@event);
         await _context.SaveChangesAsync(cancellationToken);

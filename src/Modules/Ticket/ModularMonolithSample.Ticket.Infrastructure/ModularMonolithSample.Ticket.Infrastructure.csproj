@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModularMonolithSample.Event.Domain\ModularMonolithSample.Event.Domain.csproj" />
-    <ProjectReference Include="..\ModularMonolithSample.Event.Application\ModularMonolithSample.Event.Application.csproj" />
+    <ProjectReference Include="..\ModularMonolithSample.Ticket.Domain\ModularMonolithSample.Ticket.Domain.csproj" />
+    <ProjectReference Include="..\ModularMonolithSample.Ticket.Application\ModularMonolithSample.Ticket.Application.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\ModularMonolithSample.BuildingBlocks\ModularMonolithSample.BuildingBlocks.csproj" />
   </ItemGroup>
 
-</Project>
+</Project> 

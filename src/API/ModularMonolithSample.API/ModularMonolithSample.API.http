@@ -1,6 +1,51 @@
-@ModularMonolithSample.API_HostAddress = http://localhost:5010
+@ModularMonolithSample.API_HostAddress = https://localhost:5001
 
-GET {{ModularMonolithSample.API_HostAddress}}/weatherforecast/
+### Create Event
+POST {{ModularMonolithSample.API_HostAddress}}/api/events
+Content-Type: application/json
+
+{
+  "name": "Tech Conference 2024",
+  "description": "A conference about latest technology trends",
+  "startDate": "2024-12-15T09:00:00Z",
+  "endDate": "2024-12-15T18:00:00Z",
+  "location": "Istanbul Convention Center",
+  "capacity": 100,
+  "price": 299.99
+}
+
+### Get Event
+GET {{ModularMonolithSample.API_HostAddress}}/api/events/{{eventId}}
 Accept: application/json
 
-###
+### Register Attendee
+POST {{ModularMonolithSample.API_HostAddress}}/api/attendees
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phoneNumber": "+1234567890",
+  "eventId": "{{eventId}}"
+}
+
+### Issue Ticket
+POST {{ModularMonolithSample.API_HostAddress}}/api/tickets
+Content-Type: application/json
+
+{
+  "eventId": "{{eventId}}",
+  "attendeeId": "{{attendeeId}}"
+}
+
+### Submit Feedback
+POST {{ModularMonolithSample.API_HostAddress}}/api/feedback
+Content-Type: application/json
+
+{
+  "eventId": "{{eventId}}",
+  "attendeeId": "{{attendeeId}}",
+  "rating": 5,
+  "comment": "Excellent conference! Learned a lot."
+}

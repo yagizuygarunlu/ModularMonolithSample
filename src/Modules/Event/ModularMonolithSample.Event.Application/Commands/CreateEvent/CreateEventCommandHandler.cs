@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ModularMonolithSample.Event.Domain;
+using EventEntity = ModularMonolithSample.Event.Domain.Event;
 
 namespace ModularMonolithSample.Event.Application.Commands.CreateEvent;
 
@@ -17,7 +18,7 @@ public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Gui
 
     public async Task<Guid> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
-        var @event = new Event(
+        var @event = new EventEntity(
             request.Name,
             request.Description,
             request.StartDate,

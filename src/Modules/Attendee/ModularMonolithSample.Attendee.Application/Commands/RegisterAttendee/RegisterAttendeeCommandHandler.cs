@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using ModularMonolithSample.Attendee.Domain;
 using ModularMonolithSample.Event.Domain;
+using AttendeeEntity = ModularMonolithSample.Attendee.Domain.Attendee;
 
 namespace ModularMonolithSample.Attendee.Application.Commands.RegisterAttendee;
 
@@ -37,7 +38,7 @@ public class RegisterAttendeeCommandHandler : IRequestHandler<RegisterAttendeeCo
         }
 
         // Create and save attendee
-        var attendee = new Attendee(
+        var attendee = new AttendeeEntity(
             request.FirstName,
             request.LastName,
             request.Email,
