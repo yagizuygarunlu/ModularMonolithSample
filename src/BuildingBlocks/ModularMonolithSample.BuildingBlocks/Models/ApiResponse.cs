@@ -16,7 +16,7 @@ public class ApiResponse<T>
     /// <summary>
     /// Creates a successful response with data
     /// </summary>
-    public static ApiResponse<T> SuccessResult(T data, string message = "Success")
+    public static ApiResponse<T> CreateSuccess(T data, string message = "Success")
     {
         return new ApiResponse<T>
         {
@@ -29,7 +29,7 @@ public class ApiResponse<T>
     /// <summary>
     /// Creates a successful response without data
     /// </summary>
-    public static ApiResponse<T> SuccessResult(string message = "Success")
+    public static ApiResponse<T> CreateSuccess(string message = "Success")
     {
         return new ApiResponse<T>
         {
@@ -41,7 +41,7 @@ public class ApiResponse<T>
     /// <summary>
     /// Creates an error response
     /// </summary>
-    public static ApiResponse<T> ErrorResult(string message, object? errors = null)
+    public static ApiResponse<T> CreateFailure(string message, object? errors = null)
     {
         return new ApiResponse<T>
         {
@@ -49,6 +49,30 @@ public class ApiResponse<T>
             Message = message,
             Errors = errors
         };
+    }
+
+    /// <summary>
+    /// Creates a successful response with data (legacy method)
+    /// </summary>
+    public static ApiResponse<T> SuccessResult(T data, string message = "Success")
+    {
+        return CreateSuccess(data, message);
+    }
+
+    /// <summary>
+    /// Creates a successful response without data (legacy method)
+    /// </summary>
+    public static ApiResponse<T> SuccessResult(string message = "Success")
+    {
+        return CreateSuccess(message);
+    }
+
+    /// <summary>
+    /// Creates an error response (legacy method)
+    /// </summary>
+    public static ApiResponse<T> ErrorResult(string message, object? errors = null)
+    {
+        return CreateFailure(message, errors);
     }
 
     /// <summary>

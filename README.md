@@ -188,7 +188,7 @@ services.AddModernObservability()
 ### **Quick Start**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ModularMonolithSample.git
+git clone https://github.com/yagizuygarunlu/ModularMonolithSample.git
 
 # Navigate to project
 cd ModularMonolithSample
@@ -397,10 +397,6 @@ GET    /api/system-info        # System information
 - **7 MediatR Behaviors** for cross-cutting concerns
 - **5 Custom Exceptions** for proper error handling
 - **Multiple Health Checks** for system monitoring
-
-## 🤝 **Contributing**
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ## 📄 **License**
 
