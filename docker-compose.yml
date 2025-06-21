@@ -1,30 +1,197 @@
+# ModularMonolithSample - 2025 Edition
+# Docker Compose configuration for development and production
+
 version: '3.8'
 
 services:
+  # Event Management API - Main Application
   api:
-    build: .
+    image: modularmonolithsample-api:2025
+    container_name: modularmonolith-api-2025
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
     ports:
-      - "5000:80"
-      - "5001:443"
+      - "8080:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-    volumes:
-      - ~/.aspnet/https:/https:ro
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ModularMonolithSample;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true
+      - FeatureFlags__Flags__enable-health-checks__Enabled=true
+      - FeatureFlags__Flags__enable-performance-monitoring__Enabled=true
+      - FeatureFlags__Flags__enable-advanced-caching__Enabled=true
+      - BehaviorSettings__Performance__SlowRequestThresholdMs=2000
+      - Observability__ServiceName=ModularMonolithSample-2025
+      - Observability__EnableTracing=true
+      - Observability__EnableMetrics=true
     depends_on:
-      - sqlserver
-      
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.modularmonolith.service=api"
+      - "com.modularmonolith.version=2025"
+      - "com.modularmonolith.description=Event Management API"
+
+  # SQL Server Database
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: modularmonolith-sqlserver-2025
     environment:
-      SA_PASSWORD: "YourPassword123!"
-      ACCEPT_EULA: "Y"
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
     ports:
       - "1433:1433"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    labels:
+      - "com.modularmonolith.service=database"
+      - "com.modularmonolith.version=2025"
 
+  # Redis Cache (Optional - for distributed caching)
+  redis:
+    image: redis:7-alpine
+    container_name: modularmonolith-redis-2025
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass YourRedisPassword
+    volumes:
+      - redis-data:/data
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.modularmonolith.service=cache"
+      - "com.modularmonolith.version=2025"
+
+  # Nginx Reverse Proxy (Optional - for production)
+  nginx:
+    image: nginx:alpine
+    container_name: modularmonolith-nginx-2025
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    profiles:
+      - production
+    labels:
+      - "com.modularmonolith.service=proxy"
+      - "com.modularmonolith.version=2025"
+
+  # Prometheus Monitoring (Optional - for observability)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: modularmonolith-prometheus-2025
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    labels:
+      - "com.modularmonolith.service=monitoring"
+      - "com.modularmonolith.version=2025"
+
+  # Grafana Dashboards (Optional - for visualization)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: modularmonolith-grafana-2025
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - modularmonolith-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    labels:
+      - "com.modularmonolith.service=dashboard"
+      - "com.modularmonolith.version=2025"
+
+# Networks
+networks:
+  modularmonolith-network:
+    driver: bridge
+    name: modularmonolith-2025
+    labels:
+      - "com.modularmonolith.network=main"
+      - "com.modularmonolith.version=2025"
+
+# Volumes for data persistence
 volumes:
-  sqlserver_data: 
+  sqlserver-data:
+    driver: local
+    name: modularmonolith-sqlserver-data-2025
+    labels:
+      - "com.modularmonolith.volume=database"
+      - "com.modularmonolith.version=2025"
+  
+  redis-data:
+    driver: local
+    name: modularmonolith-redis-data-2025
+    labels:
+      - "com.modularmonolith.volume=cache"
+      - "com.modularmonolith.version=2025"
+  
+  prometheus-data:
+    driver: local
+    name: modularmonolith-prometheus-data-2025
+    labels:
+      - "com.modularmonolith.volume=monitoring"
+      - "com.modularmonolith.version=2025"
+  
+  grafana-data:
+    driver: local
+    name: modularmonolith-grafana-data-2025
+    labels:
+      - "com.modularmonolith.volume=dashboard"
+      - "com.modularmonolith.version=2025" 

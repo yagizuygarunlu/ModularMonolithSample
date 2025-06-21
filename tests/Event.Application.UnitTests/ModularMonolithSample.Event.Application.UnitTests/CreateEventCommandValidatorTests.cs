@@ -1,4 +1,3 @@
-using System;
 using FluentValidation.TestHelper;
 using ModularMonolithSample.Event.Application.Commands.CreateEvent;
 using Shouldly;
@@ -20,7 +19,7 @@ public class CreateEventCommandValidatorTests
     {
         // Arrange
         var command = new CreateEventCommand(
-            "Tech Conference 2024",
+            "Tech Conference 2025",
             "Annual technology conference for developers",
             DateTime.UtcNow.AddDays(30),
             DateTime.UtcNow.AddDays(32),
@@ -44,7 +43,7 @@ public class CreateEventCommandValidatorTests
     {
         // Arrange
         var command = new CreateEventCommand(
-            name,
+            name!,
             "Test Description",
             DateTime.UtcNow.AddDays(1),
             DateTime.UtcNow.AddDays(2),
@@ -93,7 +92,7 @@ public class CreateEventCommandValidatorTests
         // Arrange
         var command = new CreateEventCommand(
             "Test Event",
-            description,
+            description!,
             DateTime.UtcNow.AddDays(1),
             DateTime.UtcNow.AddDays(2),
             "Test Location",
@@ -191,7 +190,7 @@ public class CreateEventCommandValidatorTests
             "Test Description",
             DateTime.UtcNow.AddDays(1),
             DateTime.UtcNow.AddDays(2),
-            location,
+            location!,
             100,
             50.00m
         );
@@ -321,5 +320,26 @@ public class CreateEventCommandValidatorTests
 
         // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.Price);
+    }
+
+    [Fact]
+    public async Task Should_Have_Error_When_Name_Is_Null()
+    {
+        // Arrange
+        var command = new CreateEventCommand(
+            Name: null!,
+            Description: "Test Description",
+            StartDate: DateTime.Now.AddDays(1),
+            EndDate: DateTime.Now.AddDays(2),
+            Location: "Test Location",
+            Capacity: 100,
+            Price: 50.00m
+        );
+
+        // Act
+        var result = await _validator.TestValidateAsync(command);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 } 

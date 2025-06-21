@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ModularMonolithSample.Event.Application.Commands.CreateEvent;
@@ -47,7 +46,7 @@ public class CreateEventCommandHandlerTests
     public async Task Handle_ValidCommand_ShouldPassCorrectValuesToRepository()
     {
         // Arrange
-        var eventName = "Tech Conference 2024";
+        var eventName = "Tech Conference 2025";
         var description = "Annual technology conference";
         var startDate = DateTime.UtcNow.AddDays(30);
         var endDate = DateTime.UtcNow.AddDays(32);

@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 
 namespace ModularMonolithSample.Ticket.Application.Commands.IssueTicket;

@@ -16,7 +16,8 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddGlobalExceptionHandling(this IServiceCollection services)
     {
-        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+        // Note: GlobalExceptionHandlingMiddleware is not registered as a service
+        // It's registered in the pipeline via app.UseGlobalExceptionHandling()
         return services;
     }
 

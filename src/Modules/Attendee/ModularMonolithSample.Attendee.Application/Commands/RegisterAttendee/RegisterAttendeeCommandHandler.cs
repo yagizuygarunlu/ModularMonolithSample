@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -39,10 +38,8 @@ public class RegisterAttendeeCommandHandler : IRequestHandler<RegisterAttendeeCo
 
         // Create and save attendee
         var attendee = new AttendeeEntity(
-            request.FirstName,
-            request.LastName,
+            request.Name,
             request.Email,
-            request.PhoneNumber,
             request.EventId);
 
         await _attendeeRepository.AddAsync(attendee, cancellationToken);

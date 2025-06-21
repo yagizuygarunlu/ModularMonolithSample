@@ -1,4 +1,3 @@
-using System;
 using FluentValidation.TestHelper;
 using ModularMonolithSample.Ticket.Application.Commands.IssueTicket;
 using Shouldly;

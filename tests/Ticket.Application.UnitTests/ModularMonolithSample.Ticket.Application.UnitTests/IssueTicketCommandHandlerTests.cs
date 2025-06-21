@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,10 +48,8 @@ public class IssueTicketCommandHandlerTests
         );
 
         var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
+            "John Doe",
             "john.doe@email.com",
-            "+1234567890",
             eventId
         );
 
@@ -92,10 +89,8 @@ public class IssueTicketCommandHandlerTests
         );
 
         var attendeeEntity = new AttendeeEntity(
-            "Jane",
-            "Smith",
+            "Jane Smith",
             "jane.smith@email.com",
-            "+9876543210",
             eventId
         );
 
@@ -201,10 +196,8 @@ public class IssueTicketCommandHandlerTests
         );
 
         var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
+            "John Doe",
             "john.doe@email.com",
-            "+1234567890",
             differentEventId
         );
 
@@ -241,12 +234,7 @@ public class IssueTicketCommandHandlerTests
             50.00m
         );
 
-        var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
-            "john.doe@email.com",
-            "+1234567890",
-            eventId
+        var attendeeEntity = new AttendeeEntity("John Doe", "john.doe@email.com", eventId
         );
 
         var existingTicket = new TicketEntity(
@@ -291,12 +279,7 @@ public class IssueTicketCommandHandlerTests
             50.00m
         );
 
-        var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
-            "john.doe@email.com",
-            "+1234567890",
-            eventId
+        var attendeeEntity = new AttendeeEntity("John Doe", "john.doe@email.com", eventId
         );
 
         var existingTicket = new TicketEntity(
@@ -343,12 +326,7 @@ public class IssueTicketCommandHandlerTests
             eventPrice
         );
 
-        var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
-            "john.doe@email.com",
-            "+1234567890",
-            eventId
+        var attendeeEntity = new AttendeeEntity("John Doe", "john.doe@email.com", eventId
         );
 
         var cancelledTicket = new TicketEntity(
@@ -393,12 +371,7 @@ public class IssueTicketCommandHandlerTests
             50.00m
         );
 
-        var attendeeEntity = new AttendeeEntity(
-            "John",
-            "Doe",
-            "john.doe@email.com",
-            "+1234567890",
-            eventId
+        var attendeeEntity = new AttendeeEntity("John Doe", "john.doe@email.com", eventId
         );
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>())
@@ -421,3 +394,4 @@ public class IssueTicketCommandHandlerTests
         exception.Message.ShouldBe("Database connection failed");
     }
 } 
+

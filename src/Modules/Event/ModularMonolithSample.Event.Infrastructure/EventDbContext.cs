@@ -21,6 +21,9 @@ public class EventDbContext : DbContext
             entity.Property(e => e.Description).IsRequired();
             entity.Property(e => e.Location).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Price).HasPrecision(18, 2);
+            
+            // Ignore domain events - they should not be persisted
+            entity.Ignore(e => e.DomainEvents);
         });
     }
 } 

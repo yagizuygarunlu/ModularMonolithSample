@@ -1,6 +1,8 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using ModularMonolithSample.Attendee.Application.Commands.RegisterAttendee;
 using ModularMonolithSample.Event.Application.Commands.CreateEvent;
 using ModularMonolithSample.Event.Application.Queries.GetEvent;
@@ -17,78 +19,144 @@ public class EventManagementScenarioTests : IClassFixture<WebApplicationFactory<
     public EventManagementScenarioTests(WebApplicationFactory<Program> factory)
     {
         _factory = factory;
-        _client = _factory.CreateClient();
+        _client = factory.CreateClient();
     }
 
     [Fact]
-    public async Task CompleteEventLifecycle_ShouldWork()
+    public async Task CompleteEventManagementWorkflow_ShouldWorkEndToEnd()
     {
-        // 1. Create Event
+        // Step 1: Create an event
         var createEventCommand = new CreateEventCommand(
             "Tech Conference 2024",
-            "A conference about latest technology trends",
+            "Annual technology conference",
             DateTime.UtcNow.AddDays(30),
-            DateTime.UtcNow.AddDays(31), 
-            "Istanbul Convention Center",
-            100,
-            299.99m);
+            DateTime.UtcNow.AddDays(32),
+            "Convention Center",
+            500,
+            99.99m
+        );
 
-        var createEventResponse = await _client.PostAsJsonAsync("/api/events", createEventCommand);
-        createEventResponse.EnsureSuccessStatusCode();
-        
-        var eventIdJson = await createEventResponse.Content.ReadAsStringAsync();
-        var eventId = JsonSerializer.Deserialize<Guid>(eventIdJson);
-        
-        Assert.NotEqual(Guid.Empty, eventId);
+        var eventResponse = await _client.PostAsJsonAsync("/api/events", createEventCommand);
+        Assert.Equal(HttpStatusCode.OK, eventResponse.StatusCode);
 
-        // 2. Verify Event Created
-        var getEventResponse = await _client.GetAsync($"/api/events/{eventId}");
-        getEventResponse.EnsureSuccessStatusCode();
-        
-        var eventDto = await getEventResponse.Content.ReadFromJsonAsync<EventDto>();
-        Assert.NotNull(eventDto);
-        Assert.Equal("Tech Conference 2024", eventDto.Name);
-        Assert.Equal(100, eventDto.Capacity);
+        var eventIdString = await eventResponse.Content.ReadAsStringAsync();
+        var eventId = Guid.Parse(eventIdString.Trim('"'));
 
-        // 3. Register Attendee
+        // Step 2: Register an attendee
         var registerAttendeeCommand = new RegisterAttendeeCommand(
-            "John",
-            "Doe", 
-            "john.doe@example.com",
-            "+1234567890",
-            eventId);
+            "John Doe",
+            "john.doe@email.com",
+            eventId
+        );
 
-        var registerResponse = await _client.PostAsJsonAsync("/api/attendees", registerAttendeeCommand);
-        registerResponse.EnsureSuccessStatusCode();
-        
-        var attendeeIdJson = await registerResponse.Content.ReadAsStringAsync();
-        var attendeeId = JsonSerializer.Deserialize<Guid>(attendeeIdJson);
-        
-        Assert.NotEqual(Guid.Empty, attendeeId);
+        var attendeeResponse = await _client.PostAsJsonAsync("/api/attendees", registerAttendeeCommand);
+        Assert.Equal(HttpStatusCode.OK, attendeeResponse.StatusCode);
 
-        // 4. Issue Ticket
+        var attendeeIdString = await attendeeResponse.Content.ReadAsStringAsync();
+        var attendeeId = Guid.Parse(attendeeIdString.Trim('"'));
+
+        // Step 3: Issue a ticket
         var issueTicketCommand = new IssueTicketCommand(eventId, attendeeId);
-        
-        var ticketResponse = await _client.PostAsJsonAsync("/api/tickets", issueTicketCommand);
-        ticketResponse.EnsureSuccessStatusCode();
-        
-        var ticketIdJson = await ticketResponse.Content.ReadAsStringAsync();
-        var ticketId = JsonSerializer.Deserialize<Guid>(ticketIdJson);
-        
-        Assert.NotEqual(Guid.Empty, ticketId);
 
-        // 5. Submit Feedback (This will fail due to ticket validation requirement)
-        var submitFeedbackCommand = new SubmitFeedbackCommand(
-            eventId,
-            attendeeId,
-            5,
-            "Excellent conference! Learned a lot.");
+        var ticketResponse = await _client.PostAsJsonAsync("/api/tickets", issueTicketCommand);
+        Assert.Equal(HttpStatusCode.OK, ticketResponse.StatusCode);
+
+        var ticketIdString = await ticketResponse.Content.ReadAsStringAsync();
+        var ticketId = Guid.Parse(ticketIdString.Trim('"'));
+
+        // Step 4: Submit feedback
+        var submitFeedbackCommand = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Excellent conference!");
 
         var feedbackResponse = await _client.PostAsJsonAsync("/api/feedback", submitFeedbackCommand);
+        Assert.Equal(HttpStatusCode.OK, feedbackResponse.StatusCode);
+
+        var feedbackIdString = await feedbackResponse.Content.ReadAsStringAsync();
+        var feedbackId = Guid.Parse(feedbackIdString.Trim('"'));
+
+        // Verify all IDs are valid
+        Assert.NotEqual(Guid.Empty, eventId);
+        Assert.NotEqual(Guid.Empty, attendeeId);
+        Assert.NotEqual(Guid.Empty, ticketId);
+        Assert.NotEqual(Guid.Empty, feedbackId);
+    }
+
+    [Fact]
+    public async Task RegisterAttendee_WithInvalidEventId_ShouldReturnBadRequest()
+    {
+        var invalidEventId = Guid.NewGuid();
+        var registerAttendeeCommand = new RegisterAttendeeCommand(
+            "Jane Smith",
+            "jane.smith@email.com",
+            invalidEventId
+        );
+
+        var response = await _client.PostAsJsonAsync("/api/attendees", registerAttendeeCommand);
         
-        // We expect this to fail since ticket is not validated
-        Assert.False(feedbackResponse.IsSuccessStatusCode);
-        Assert.Equal(System.Net.HttpStatusCode.BadRequest, feedbackResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task IssueTicket_WithInvalidAttendeeId_ShouldReturnBadRequest()
+    {
+        var invalidAttendeeId = Guid.NewGuid();
+        var invalidEventId = Guid.NewGuid();
+        var issueTicketCommand = new IssueTicketCommand(invalidEventId, invalidAttendeeId);
+
+        var response = await _client.PostAsJsonAsync("/api/tickets", issueTicketCommand);
+        
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateEvent_WithValidData_ShouldReturnSuccess()
+    {
+        var createEventCommand = new CreateEventCommand(
+            "Workshop 2024",
+            "Hands-on workshop",
+            DateTime.UtcNow.AddDays(15),
+            DateTime.UtcNow.AddDays(16),
+            "Training Center",
+            50,
+            49.99m
+        );
+
+        var response = await _client.PostAsJsonAsync("/api/events", createEventCommand);
+        
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        
+        var eventIdString = await response.Content.ReadAsStringAsync();
+        var eventId = Guid.Parse(eventIdString.Trim('"'));
+        Assert.NotEqual(Guid.Empty, eventId);
+    }
+
+    [Fact]
+    public async Task GetEvent_WithValidId_ShouldReturnEventDetails()
+    {
+        // First create an event
+        var createEventCommand = new CreateEventCommand(
+            "Seminar 2024",
+            "Educational seminar",
+            DateTime.UtcNow.AddDays(20),
+            DateTime.UtcNow.AddDays(21),
+            "University Hall",
+            100,
+            29.99m
+        );
+
+        var createResponse = await _client.PostAsJsonAsync("/api/events", createEventCommand);
+        var eventIdString = await createResponse.Content.ReadAsStringAsync();
+        var eventId = Guid.Parse(eventIdString.Trim('"'));
+
+        // Then retrieve it
+        var getResponse = await _client.GetAsync($"/api/events/{eventId}");
+        
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+        
+        var eventJson = await getResponse.Content.ReadAsStringAsync();
+        var eventData = JsonSerializer.Deserialize<JsonElement>(eventJson);
+        
+        Assert.Equal("Seminar 2024", eventData.GetProperty("name").GetString());
+        Assert.Equal("Educational seminar", eventData.GetProperty("description").GetString());
     }
 
     [Fact]
@@ -114,10 +182,8 @@ public class EventManagementScenarioTests : IClassFixture<WebApplicationFactory<
     public async Task RegisterAttendee_ForNonExistentEvent_ShouldReturnBadRequest()
     {
         var command = new RegisterAttendeeCommand(
-            "John",
-            "Doe",
+            "John Doe",
             "john.doe@example.com", 
-            "+1234567890",
             Guid.NewGuid()); // Non-existent event
 
         var response = await _client.PostAsJsonAsync("/api/attendees", command);
@@ -130,10 +196,8 @@ public class EventManagementScenarioTests : IClassFixture<WebApplicationFactory<
     public async Task RegisterAttendee_WithInvalidEmail_ShouldReturnBadRequest()
     {
         var command = new RegisterAttendeeCommand(
-            "John",
-            "Doe",
+            "John Doe",
             "invalid-email", // Invalid email format
-            "+1234567890",
             Guid.NewGuid());
 
         var response = await _client.PostAsJsonAsync("/api/attendees", command);

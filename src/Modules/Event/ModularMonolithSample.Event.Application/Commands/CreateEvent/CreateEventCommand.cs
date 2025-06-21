@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 
 namespace ModularMonolithSample.Event.Application.Commands.CreateEvent;

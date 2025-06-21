@@ -23,11 +23,9 @@ public static class EventModuleConfiguration
         // Add validators
         services.AddValidatorsFromAssembly(typeof(CreateEventCommand).Assembly);
         
-        services.AddMediatR(cfg => 
-        {
-            cfg.RegisterServicesFromAssembly(typeof(CreateEventCommand).Assembly);
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        });
+        // MediatR configuration for version 11.1.0
+        services.AddMediatR(typeof(CreateEventCommand).Assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

@@ -24,12 +24,10 @@ public static class AttendeeModuleConfiguration
         // Add validators
         services.AddValidatorsFromAssembly(typeof(RegisterAttendeeCommand).Assembly);
         
-        services.AddMediatR(cfg => 
-        {
-            cfg.RegisterServicesFromAssembly(typeof(RegisterAttendeeCommand).Assembly);
-            cfg.RegisterServicesFromAssembly(typeof(EventCreatedDomainEventHandler).Assembly);
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        });
+        // MediatR configuration for version 11.1.0
+        services.AddMediatR(typeof(RegisterAttendeeCommand).Assembly);
+        services.AddMediatR(typeof(EventCreatedDomainEventHandler).Assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

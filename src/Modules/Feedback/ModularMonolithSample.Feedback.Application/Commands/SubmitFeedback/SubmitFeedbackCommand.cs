@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 
 namespace ModularMonolithSample.Feedback.Application.Commands.SubmitFeedback;

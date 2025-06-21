@@ -1,5 +1,3 @@
-using System;
-
 namespace ModularMonolithSample.Feedback.Domain;
 
 public class Feedback
@@ -11,7 +9,10 @@ public class Feedback
     public string Comment { get; private set; }
     public DateTime SubmissionDate { get; private set; }
 
-    private Feedback() { } // For EF Core
+    private Feedback()
+    {
+        Comment = string.Empty;
+    } // For EF Core
 
     public Feedback(Guid eventId, Guid attendeeId, int rating, string comment)
     {
@@ -24,7 +25,7 @@ public class Feedback
         EventId = eventId;
         AttendeeId = attendeeId;
         Rating = rating;
-        Comment = comment;
+        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
         SubmissionDate = DateTime.UtcNow;
     }
 

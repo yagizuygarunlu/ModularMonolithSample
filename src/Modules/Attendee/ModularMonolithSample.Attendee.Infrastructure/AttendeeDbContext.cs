@@ -17,12 +17,13 @@ public class AttendeeDbContext : DbContext
         modelBuilder.Entity<AttendeeEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
             entity.Property(e => e.EventId).IsRequired();
             entity.Property(e => e.RegistrationDate).IsRequired();
+            
+            // Ignore domain events - they should not be persisted
+            entity.Ignore(e => e.DomainEvents);
         });
     }
 } 

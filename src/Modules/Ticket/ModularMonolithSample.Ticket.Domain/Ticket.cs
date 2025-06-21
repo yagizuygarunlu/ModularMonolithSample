@@ -1,4 +1,3 @@
-using System;
 
 namespace ModularMonolithSample.Ticket.Domain;
 
@@ -12,7 +11,11 @@ public class Ticket
     public DateTime IssueDate { get; private set; }
     public TicketStatus Status { get; private set; }
 
-    private Ticket() { } // For EF Core
+    // Private constructor for EF Core
+    private Ticket()
+    {
+        TicketNumber = string.Empty;
+    }
 
     public Ticket(string ticketNumber, Guid eventId, Guid attendeeId, decimal price)
     {

@@ -23,11 +23,9 @@ public static class FeedbackModuleConfiguration
         // Add validators
         services.AddValidatorsFromAssembly(typeof(SubmitFeedbackCommand).Assembly);
         
-        services.AddMediatR(cfg => 
-        {
-            cfg.RegisterServicesFromAssembly(typeof(SubmitFeedbackCommand).Assembly);
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        });
+        // MediatR configuration for version 11.1.0
+        services.AddMediatR(typeof(SubmitFeedbackCommand).Assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

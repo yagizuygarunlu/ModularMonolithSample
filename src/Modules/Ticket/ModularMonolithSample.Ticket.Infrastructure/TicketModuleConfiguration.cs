@@ -24,12 +24,10 @@ public static class TicketModuleConfiguration
         // Add validators
         services.AddValidatorsFromAssembly(typeof(IssueTicketCommand).Assembly);
         
-        services.AddMediatR(cfg => 
-        {
-            cfg.RegisterServicesFromAssembly(typeof(IssueTicketCommand).Assembly);
-            cfg.RegisterServicesFromAssembly(typeof(AttendeeRegisteredDomainEventHandler).Assembly);
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        });
+        // MediatR configuration for version 11.1.0
+        services.AddMediatR(typeof(IssueTicketCommand).Assembly);
+        services.AddMediatR(typeof(AttendeeRegisteredDomainEventHandler).Assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

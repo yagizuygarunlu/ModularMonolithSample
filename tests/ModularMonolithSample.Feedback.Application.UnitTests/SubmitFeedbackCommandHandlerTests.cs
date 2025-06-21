@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,9 +45,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(eventId, attendeeId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity("TICKET-001", eventId, attendeeId, 50.0m);
         ticket.Validate(); // Set status to Validated
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
@@ -84,9 +83,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 4, "Updated feedback!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(eventId, attendeeId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity("TICKET-002", eventId, attendeeId, 50.0m);
         ticket.Validate();
         var existingFeedback = new FeedbackEntity(eventId, attendeeId, 3, "Initial feedback");
 
@@ -132,7 +131,7 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
         _attendeeRepository.GetByIdAsync(attendeeId, Arg.Any<CancellationToken>()).Returns((AttendeeEntity?)null);
@@ -153,8 +152,8 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", differentEventId); // Different event
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", differentEventId); // Different event
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
         _attendeeRepository.GetByIdAsync(attendeeId, Arg.Any<CancellationToken>()).Returns(attendee);
@@ -174,9 +173,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(eventId, attendeeId); // Not validated
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity("TICKET-003", eventId, attendeeId, 50.0m); // Not validated
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
         _attendeeRepository.GetByIdAsync(attendeeId, Arg.Any<CancellationToken>()).Returns(attendee);
@@ -198,9 +197,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(differentEventId, attendeeId); // Different event
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity("TICKET-004", differentEventId, attendeeId, 50.0m); // Different event
         ticket.Validate();
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
@@ -222,11 +221,11 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
         
-        var ticket1 = new TicketEntity(eventId, attendeeId); // Not validated
-        var ticket2 = new TicketEntity(eventId, attendeeId); // Will be validated
+        var ticket1 = new TicketEntity("TICKET-005", eventId, attendeeId, 50.0m); // Not validated
+        var ticket2 = new TicketEntity("TICKET-006", eventId, attendeeId, 50.0m); // Will be validated
         ticket2.Validate();
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
@@ -256,8 +255,8 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
         _attendeeRepository.GetByIdAsync(attendeeId, Arg.Any<CancellationToken>()).Returns(attendee);
@@ -278,9 +277,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, 5, "Great event!");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(eventId, attendeeId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity("TICKET-007", eventId, attendeeId, 50.0m);
         ticket.Validate();
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
@@ -288,13 +287,14 @@ public class SubmitFeedbackCommandHandlerTests
         _ticketRepository.GetByAttendeeIdAsync(attendeeId, Arg.Any<CancellationToken>()).Returns(new[] { ticket });
         _feedbackRepository.GetByEventAndAttendeeIdAsync(eventId, attendeeId, Arg.Any<CancellationToken>()).Returns((FeedbackEntity?)null);
 
+        // Configure to simulate completion even with cancellation requested
+        var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
         FeedbackEntity? capturedFeedback = null;
         _feedbackRepository
             .AddAsync(Arg.Do<FeedbackEntity>(f => capturedFeedback = f), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
-
-        var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.Cancel();
 
         // Act
         var result = await _handler.Handle(command, cancellationTokenSource.Token);
@@ -302,6 +302,7 @@ public class SubmitFeedbackCommandHandlerTests
         // Assert
         result.ShouldNotBe(Guid.Empty);
         capturedFeedback.ShouldNotBeNull();
+        await _feedbackRepository.Received(1).AddAsync(Arg.Any<FeedbackEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -317,9 +318,9 @@ public class SubmitFeedbackCommandHandlerTests
         var attendeeId = Guid.NewGuid();
         var command = new SubmitFeedbackCommand(eventId, attendeeId, rating, $"Rating {rating} feedback");
 
-        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), "Test Location", 100);
-        var attendee = new AttendeeEntity("john.doe@email.com", "John Doe", eventId);
-        var ticket = new TicketEntity(eventId, attendeeId);
+        var @event = new EventEntity("Test Event", "Test Description", DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), "Test Location", 100, 50.0m);
+        var attendee = new AttendeeEntity("John Doe", "john.doe@email.com", eventId);
+        var ticket = new TicketEntity($"TICKET-{rating:D3}", eventId, attendeeId, 50.0m);
         ticket.Validate();
 
         _eventRepository.GetByIdAsync(eventId, Arg.Any<CancellationToken>()).Returns(@event);
@@ -340,5 +341,6 @@ public class SubmitFeedbackCommandHandlerTests
         capturedFeedback.ShouldNotBeNull();
         capturedFeedback.Rating.ShouldBe(rating);
         capturedFeedback.Comment.ShouldBe($"Rating {rating} feedback");
+        await _feedbackRepository.Received(1).AddAsync(Arg.Any<FeedbackEntity>(), Arg.Any<CancellationToken>());
     }
 } 
