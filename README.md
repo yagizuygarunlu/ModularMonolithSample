@@ -402,16 +402,6 @@ GET    /api/system-info        # System information
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 **Acknowledgments**
-
-- **Clean Architecture** by Robert C. Martin
-- **Domain-Driven Design** by Eric Evans
-- **CQRS** pattern by Greg Young
-- **.NET Team** for the amazing framework
-- **Community contributors** for inspiration and feedback
-
----
-
 ⭐ **If you find this project helpful, please give it a star!** ⭐
 
 📧 **Questions?** Open an issue or reach out to the maintainers.
@@ -420,4 +410,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Built with ❤️ using .NET 9.0 and modern architecture patterns - 2025 Edition* 
+*Built with using .NET 9.0 and modern architecture patterns - 2025 Edition* 
