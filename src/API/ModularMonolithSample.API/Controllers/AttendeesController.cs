@@ -5,12 +5,12 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithSample.Attendee.Application.Commands.RegisterAttendee;
+using ModularMonolithSample.BuildingBlocks.Controllers;
+using ModularMonolithSample.BuildingBlocks.Models;
 
 namespace ModularMonolithSample.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AttendeesController : ControllerBase
+public class AttendeesController : BaseApiController
 {
     private readonly IMediator _mediator;
 
@@ -19,25 +19,10 @@ public class AttendeesController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Guid>> RegisterAttendee(RegisterAttendeeCommand command, CancellationToken cancellationToken)
+    [HttpPost("register")]
+    public async Task<ActionResult<ApiResponse<Guid>>> RegisterAttendee(RegisterAttendeeCommand command, CancellationToken cancellationToken)
     {
-        try
-        {
-            var attendeeId = await _mediator.Send(command, cancellationToken);
-            return Ok(attendeeId);
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(ex.Errors);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An error occurred: {ex.Message}");
-        }
+        var attendeeId = await _mediator.Send(command, cancellationToken);
+        return Created(attendeeId, "Attendee registered successfully");
     }
 } 
