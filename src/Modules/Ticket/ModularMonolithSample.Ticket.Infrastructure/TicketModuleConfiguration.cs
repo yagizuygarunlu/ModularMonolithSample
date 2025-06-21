@@ -16,7 +16,7 @@ public static class TicketModuleConfiguration
     public static IServiceCollection AddTicketModule(this IServiceCollection services)
     {
         services.AddDbContext<TicketDbContext>(options =>
-            options.UseInMemoryDatabase("TicketDb"));
+            options.UseInMemoryDatabase("TicketDatabase"));
 
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();

@@ -15,7 +15,7 @@ public static class FeedbackModuleConfiguration
     public static IServiceCollection AddFeedbackModule(this IServiceCollection services)
     {
         services.AddDbContext<FeedbackDbContext>(options =>
-            options.UseInMemoryDatabase("FeedbackDb"));
+            options.UseInMemoryDatabase("FeedbackDatabase"));
 
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();

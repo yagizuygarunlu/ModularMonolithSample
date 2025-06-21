@@ -16,7 +16,7 @@ public static class AttendeeModuleConfiguration
     public static IServiceCollection AddAttendeeModule(this IServiceCollection services)
     {
         services.AddDbContext<AttendeeDbContext>(options =>
-            options.UseInMemoryDatabase("AttendeeDb"));
+            options.UseInMemoryDatabase("AttendeeDatabase"));
 
         services.AddScoped<IAttendeeRepository, AttendeeRepository>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
